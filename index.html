@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IOT NPTEL WEEK-6</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e5;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background-color: #f8f8f8;
+        }
+
+        .option.selected {
+            border-color: #3b82f6;
+        }
+
+        .option.correct {
+            background-color: #ecfdf5;
+        }
+
+        .option.wrong {
+            background-color: #fef2f2;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+        }
+
+        .feedback {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e5e5;
+            display: none;
+        }
+
+        .feedback.visible {
+            display: block;
+        }
+
+        .result-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .result-icon.correct {
+            color: #059669;
+        }
+
+        .result-icon.wrong {
+            color: #dc2626;
+        }
+
+        .explanation {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .score {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .button:hover {
+            background-color: #2563eb;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IOT NPTEL WEEK-6</h1>
+        <div id="quiz-container"></div>
+        <div class="controls">
+            <div id="score" class="score"></div>
+            <button id="submit-btn" class="button">Submit Answers</button>
+        </div>
+    </div>
+
+    <script>
+const questions = [
+  {
+    id: 1,
+    question: "Python is popular for embedded application development as it is a very lightweight programming language.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "Python is popular for embedded applications because it's lightweight. Lecture: INTRODUCTION TO PYTHON PROGRAMMING-I @1:22."
+  },
+  {
+    id: 2,
+    question: "Adafruit provides a library to work with DHT22 Sensor.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "Adafruit provides a DHT22 library. Lecture: Implementation of IoT with Raspberry Pi-II @ 4:41."
+  },
+  {
+    id: 3,
+    question: "What is the output of the given Python code?",
+    options: ["5", "12", "Code", "&Code"],
+    correctAnswer: 2,
+    explanation: "Output is 'Code' after splitting '6&Code' by '&'."
+  },
+  {
+    id: 4,
+    question: "To indicate different blocks of code, Python follows rigid indentation.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "Python requires indentation to define blocks. Lecture: INTRODUCTION TO PYTHON PROGRAMMING-I @7:29."
+  },
+  {
+    id: 5,
+    question: "What is the output of the following line?\n>>> print “Hi, Welcome to python!”",
+    options: [
+      "Hi, Welcome to python!",
+      "“Hi, Welcome to python!”",
+      "Hi, Welcome to python",
+      "None of these"
+    ],
+    correctAnswer: 0,
+    explanation: "The print statement outputs: Hi, Welcome to python!. Lecture: PYTHON PROGRAMMING-II @07:31."
+  },
+  {
+    id: 6,
+    question: "During remote server access by Raspberry Pi, what is needed by the client?",
+    options: [
+      "Only IP address of server",
+      "Only port number",
+      "Both server IP address and port number",
+      "Client’s IP address"
+    ],
+    correctAnswer: 2,
+    explanation: "Both IP and port of server are required. Lecture 31 @14:13."
+  },
+  {
+    id: 7,
+    question: "Is the command 'sudo pip install pillow' correct for installing PIL?",
+    options: ["Correct", "Incorrect"],
+    correctAnswer: 0,
+    explanation: "Command is correct for PIL. Lecture: PYTHON PROGRAMMING-II @17:40."
+  },
+  {
+    id: 8,
+    question: "What is the purpose of 'w' mode in open() function?",
+    options: [
+      "To read a file",
+      "To write data to a file, overwriting existing content",
+      "To append data to a file",
+      "To open a file in read and write mode"
+    ],
+    correctAnswer: 1,
+    explanation: "'w' writes and overwrites file content. Lecture: PYTHON PROGRAMMING-II @05:05."
+  },
+  {
+    id: 9,
+    question: "What will be the output of this Python file read/write code?",
+    options: [
+      "Writing data",
+      "Reading from the file\nWriting data",
+      "Error: File not found",
+      "None of the above"
+    ],
+    correctAnswer: 1,
+    explanation: "Output: Reading from the file\nWriting data. Lecture: PYTHON PROGRAMMING-II @05:05."
+  },
+  {
+    id: 10,
+    question: "Can we configure Raspberry Pi as a File Server?",
+    options: ["Yes", "No"],
+    correctAnswer: 0,
+    explanation: "Yes, Pi can be a file server. Lecture: RASPBERRY PI-I @02:46."
+  },
+  {
+    id: 11,
+    question: "Which command is used to configure the Raspberry Pi for the camera module?",
+    options: [
+      "sudo camera-config",
+      "sudo raspi-config",
+      "sudo enable-camera",
+      "sudo pi-setup"
+    ],
+    correctAnswer: 1,
+    explanation: "Use 'sudo raspi-config'. Lecture: RASPBERRY PI-II @18:44."
+  },
+  {
+    id: 12,
+    question: "What is the final step after enabling camera in Pi configuration?",
+    options: [
+      "Restart the camera service",
+      "Run a camera test command",
+      "Reboot the Raspberry Pi",
+      "Reinstall the Raspberry Pi OS"
+    ],
+    correctAnswer: 2,
+    explanation: "Reboot is required. Lecture: RASPBERRY PI-II @18:44."
+  },
+  {
+    id: 13,
+    question: "Which command exits the nano editor?",
+    options: ["Ctrl + X", "Ctrl + O", "Ctrl + K", "None of these"],
+    correctAnswer: 0,
+    explanation: "Ctrl + X exits nano. Lecture: RASPBERRY PI-II @10:20."
+  },
+  {
+    id: 14,
+    question: "In a temperature-controlled fan system using a relay, when should the fan turn on?",
+    options: [
+      "When the relay is manually triggered",
+      "When the temperature is lower than threshold",
+      "When the temperature exceeds threshold",
+      "When battery voltage drops"
+    ],
+    correctAnswer: 2,
+    explanation: "Fan turns on above threshold temperature. Lecture: PYTHON PROGRAMMING-II @11:18."
+  },
+  {
+    id: 15,
+    question: "What does 'raspistillcapture -o image.jpg' do?",
+    options: [
+      "Captures video feed",
+      "Captures still image",
+      "Both (a) and (b)",
+      "None of these"
+    ],
+    correctAnswer: 3,
+    explanation: "Command is invalid. Lecture: RASPBERRY PI-II @19:29."
+  }
+];
+
+
+
+
+        let selectedAnswers = {};
+        let submitted = false;
+
+        function createQuiz() {
+            const quizContainer = document.getElementById('quiz-container');
+            
+            questions.forEach(question => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                
+                questionCard.innerHTML = `
+                    <div class="question-text">Q${question.id}. ${question.question}</div>
+                    <div class="options-container">
+                        ${question.options.map((option, index) => `
+                            <label class="option" data-question="${question.id}" data-option="${index}">
+                                <input type="radio" name="question${question.id}" value="${index}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${question.id}">
+                        <div class="result-icon">
+                            <span class="icon"></span>
+                            <span class="result-text"></span>
+                        </div>
+                        <div class="explanation">${question.explanation}</div>
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionCard);
+            });
+
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', handleOptionSelect);
+            });
+
+            document.getElementById('submit-btn').addEventListener('click', handleSubmit);
+        }
+
+        function handleOptionSelect(event) {
+            if (submitted) return;
+
+            const questionId = parseInt(event.currentTarget.dataset.question);
+            const optionIndex = parseInt(event.currentTarget.dataset.option);
+
+            selectedAnswers[questionId] = optionIndex;
+
+            const questionOptions = document.querySelectorAll(`.option[data-question="${questionId}"]`);
+            questionOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+
+            const radioButton = event.currentTarget.querySelector('input[type="radio"]');
+            radioButton.checked = true;
+        }
+
+        function handleSubmit() {
+            if (Object.keys(selectedAnswers).length < questions.length) {
+                alert("Please answer all questions before submitting!");
+                return;
+            }
+
+            submitted = true;
+            let score = 0;
+
+            questions.forEach(question => {
+                const isCorrect = selectedAnswers[question.id] === question.correctAnswer;
+                if (isCorrect) score++;
+
+                const feedback = document.getElementById(`feedback-${question.id}`);
+                feedback.classList.add('visible');
+
+                const resultIcon = feedback.querySelector('.result-icon');
+                const resultText = feedback.querySelector('.result-text');
+                
+                if (isCorrect) {
+                    resultIcon.classList.add('correct');
+                    resultText.textContent = 'Correct Answer +1';
+                } else {
+                    resultIcon.classList.add('wrong');
+                    resultText.textContent = 'Wrong Answer +0';
+                }
+
+                const options = document.querySelectorAll(`.option[data-question="${question.id}"]`);
+                options.forEach((option, index) => {
+                    if (index === question.correctAnswer) {
+                        option.classList.add('correct');
+                    } else if (index === selectedAnswers[question.id]) {
+                        option.classList.add('wrong');
+                    }
+                });
+            });
+
+            document.getElementById('score').textContent = `Score: ${score}/${questions.length}`;
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = 'Try Again';
+            submitBtn.removeEventListener('click', handleSubmit);
+            submitBtn.addEventListener('click', resetQuiz);
+        }
+
+        function resetQuiz() {
+            location.reload();
+        }
+
+        createQuiz();
+    </script>
+</body>
+</html>
