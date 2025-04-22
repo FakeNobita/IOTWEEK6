@@ -45,6 +45,15 @@
             color: #333;
         }
 
+        .question-image {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 16px auto;
+            border-radius: 8px;
+        }
+
+
         .options-container {
             display: flex;
             flex-direction: column;
@@ -175,6 +184,7 @@ const questions = [
   {
     id: 3,
     question: "What is the output of the given Python code?",
+    image: "",
     options: ["5", "12", "Code", "&Code"],
     correctAnswer: 2,
     explanation: "Output is 'Code' after splitting '6&Code' by '&'."
@@ -308,7 +318,8 @@ const questions = [
 
 
 
-        let selectedAnswers = {};
+
+let selectedAnswers = {};
         let submitted = false;
 
         function createQuiz() {
@@ -320,6 +331,7 @@ const questions = [
                 
                 questionCard.innerHTML = `
                     <div class="question-text">Q${question.id}. ${question.question}</div>
+                    ${question.image ? `<img src="${question.image}" alt="Image for question ${question.id}" class="question-image">` : ''}
                     <div class="options-container">
                         ${question.options.map((option, index) => `
                             <label class="option" data-question="${question.id}" data-option="${index}">
@@ -336,6 +348,7 @@ const questions = [
                         <div class="explanation">${question.explanation}</div>
                     </div>
                 `;
+
                 
                 quizContainer.appendChild(questionCard);
             });
